@@ -109,7 +109,8 @@ GROUP BY number_session
 
 3.1 Проверка аномалий в длительности сессий
 ```sql
-WITH num_sesssions AS (
+WITH num_sesssions AS
+(
 SELECT 
     *,
     ROW_NUMBER() OVER(Partition BY user_id ORDER BY open_time) AS number_session
