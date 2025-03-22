@@ -121,3 +121,13 @@ FROM num_sesssions
 WHERE number_session in (141, 154, 125, 198, 199)
 ORDER BY number_session
 ```
+
+## Метрики монетизации
+1. Revenue по дням
+```sql
+SELECT
+   DATE(time) AS day,
+   SUM(amount) AS revenue
+FROM payment
+GROUP BY  DATE(time)
+```
