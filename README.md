@@ -106,3 +106,17 @@ SELECT
 FROM num_sesssions
 GROUP BY number_session
 ```
+
+3.1 Проверка аномалий в длительности сессий
+```sql
+WITH num_sesssions AS (
+SELECT 
+    *,
+    ROW_NUMBER() OVER(Partition BY user_id ORDER BY open_time) AS number_session
+FROM session_close
+)
+SELECT *
+FROM num_sesssions
+WHERE number_session in (141, 154, 125, 198, 199)
+ORDER BY number_session
+```
