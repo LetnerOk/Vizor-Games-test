@@ -88,3 +88,21 @@ SELECT
 FROM active_sessions
 GROUP BY active_date
 ```
+
+3. Cредняя длительность сессии в зависимости от порядкового номера сессии с исключением юзера 117411339 из сессии 199 с аномальной продолжительностью.
+   Результат: номер сессии - средняя продолжительность.
+```sql
+WITH num_sesssions AS
+(
+SELECT 
+    *,
+    ROW_NUMBER() OVER(Partition BY user_id ORDER BY open_time) AS number_session
+FROM session_close
+WHERE user_id != 117411339
+)
+SELECT
+    number_session,
+    ROUND(avg(duration), 2) AS average_duration
+FROM num_sesssions
+GROUP BY number_session
+```
