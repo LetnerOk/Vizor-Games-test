@@ -107,7 +107,7 @@ FROM num_sesssions
 GROUP BY number_session
 ```
 
-  3.1 Проверка аномалий в длительности сессий
+   3.1 Проверка аномалий в длительности сессий
 ```sql
 WITH num_sesssions AS
 (
