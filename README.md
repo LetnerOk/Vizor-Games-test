@@ -66,3 +66,25 @@ FROM returned_d rd
 GROUP BY rd.install_date
 ```
 
+2. Среднее кол-во сессий на активного игрока по дням с момента регистрации.
+   Результат: день - среднее кол-во сессий.
+```sql
+WITH active_sessions AS
+(
+SELECT
+    sc.user_id,
+    DATE(open_time) as active_date,
+    COUNT(*) AS sessions_per_day
+FROM session_close sc
+JOIN install ON sc.user_id=install.user_id AND (DATE(open_time) >= DATE(reg_time))
+WHERE duration != 0
+GROUP BY 1, 2
+ORDER BY 2
+)
+SELECT 
+    active_date,
+--    ROUND(SUM(sessions_per_day)*1.0/COUNT(distinct user_id), 2) AS avg_sessions_per_user,
+    ROUND(AVG(sessions_per_day), 2) AS avg_sessions_per_user
+FROM active_sessions
+GROUP BY active_date
+```
