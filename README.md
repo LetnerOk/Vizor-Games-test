@@ -245,7 +245,7 @@ ORDER BY quest_number
 ```
 
 ## Поиск проблемных квестов. 
-1. Воронка прохождения квестов. Кол-во юзеров, завершивших каждый квест.
+Воронка прохождения квестов. Кол-во юзеров, завершивших каждый квест.
    Результат: quest - номер квеста - кол-во игроков.
 ```sql
 WITH quests AS
@@ -266,32 +266,6 @@ SELECT
     COUNT(DISTINCT user_id) AS completed_quest_players
 FROM quests
 WHERE time_end < DATETIME('3000-01-01 00:00:00')
-GROUP BY quest
-ORDER BY quest_number
-```
-
-2. Среднее время, потраченное игроком на прохождение квеста. Чистое время прохождения квестов юзерами, без перерывов,
-   мы посчитать не можем, но можем посчитать, сколько времени в среднем нужно игроку от старта до окончания квеста.
-   Это время может включать паузы и перерывы, что в сумме будет отражать вовлеченность игроков в процесс в совокупности с длительностью.
-``sql
-WITH quests AS
-(
-SELECT 
-    qs.user_id,
-    qs.time AS time_start,
-    COALESCE (qc.time, DATETIME('3000-01-01 00:00:00')) AS time_end,
-    qs.quest,
-    CAST(SUBSTR(qs.quest, 7, 8) AS INTEGER) AS quest_number
---    LEAD(CAST(SUBSTR(qs.quest, 7, 8) AS INTEGER)) OVER (PARTITION BY qs.user_id ORDER BY qs.time) AS next_quest
-FROM quest_start qs
-LEFT JOIN quest_complete qc ON (qs.user_id = qc.user_id)
-                           AND (qs.quest = qc.quest)
-)
-SELECT
-    quest,
-    ROUND(avg(JULIANDAY(time_end) - JULIANDAY(time_start))*24*60, 3) duration_quest
-FROM quests
-WHERE time_end != '3000-01-01 00:00:00'
 GROUP BY quest
 ORDER BY quest_number
 ```
