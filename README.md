@@ -208,3 +208,38 @@ GROUP BY q.quest
 6. Суммарное ревенью игроков в зависимости от квестов, которые были активны в момент совершения покупки.  
    При наличии нескольких активных квестов разделить ревенью в равной степени на каждый квест.  
    Результат: quest - суммарное кол-во ревенью.
+   Таблицу с квестами соединяется с таблицей оплат с помощью Left join. Один платеж соответствует одному юзеру, поэтому если у юзера есть одновременно активные два квета,
+   соединение даст две строки с разными квестами, но одним времене  оплаты. В таком случае оконная функция будет считать одновременно активные квесты в момент этой оплаты.
+```sql
+WITH quests AS
+(
+SELECT 
+    qs.user_id,
+    qs.time AS time_start,
+    COALESCE (qc.time, DATETIME('3000-01-01 00:00:00')) AS time_end,
+    qs.quest
+FROM quest_start qs
+LEFT JOIN quest_complete qc ON (qs.user_id = qc.user_id)
+                           AND (qs.quest = qc.quest)
+)
+, pyaments_in_quest AS (
+SELECT 
+    qs.user_id,
+    qs.quest,
+    amount,
+    p.time,
+    amount/(COUNT(qs.quest) OVER (PARTITION BY p.time)) AS amount_per_active_quests
+FROM quests qs
+INNER JOIN payment p ON (qs.user_id = p.user_id)
+           AND (p.time BETWEEN time_start AND time_end)
+ORDER BY qs.quest
+
+)
+SELECT 
+    quest,
+   CAST(SUBSTR(quest, 7, 8) AS INTEGER) AS quest_number,
+    SUM(amount_per_active_quests)
+FROM pyaments_in_quest
+GROUP BY quest
+ORDER BY quest_number
+```
