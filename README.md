@@ -273,4 +273,4 @@ ORDER BY quest_number
 # Визуализация и выводы
 Визуализацию данных я осуществляла в Preset (open-source Apache Superset).
 
-![](/figures/Retention.png)
+![](/Figures/Retention.png)
