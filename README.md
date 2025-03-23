@@ -132,7 +132,7 @@ FROM payment
 GROUP BY  DATE(time)
 ```
 
-2. ARPU, DAU
+2. ARPU, DAU по дням  
    Результат: день - DAU - ARPU.
 ```sql
 SELECT 
@@ -144,7 +144,7 @@ LEFT JOIN payment p ON sc.user_id = p.user_id AND DATE(sc.open_time) =  DATE(p.t
 GROUP BY DATE(open_time)
 ```
 
-3. ARPPU по дням
+3. ARPPU по дням  
    Результат: день - ARPPU.
 ```sql
 SELECT 
