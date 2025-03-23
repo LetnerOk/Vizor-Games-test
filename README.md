@@ -131,3 +131,26 @@ SELECT
 FROM payment
 GROUP BY  DATE(time)
 ```
+
+2. ARPU, DAU
+   Результат: день - DAU - ARPU.
+```sql
+SELECT 
+    DATE(open_time) AS day,
+    COUNT(DISTINCT sc.user_id) AS DAU,
+    COALESCE(SUM(amount)/COUNT(DISTINCT sc.user_id), 0) AS ARPU
+FROM session_close sc
+LEFT JOIN payment p ON sc.user_id = p.user_id AND DATE(sc.open_time) =  DATE(p.time)
+GROUP BY DATE(open_time)
+```
+
+3. ARPPU по дням
+   Результат: день - ARPPU.
+```sql
+SELECT 
+    DATE(time) AS day,
+    SUM(amount)/COUNT(DISTINCT user_id) AS ARPPU
+FROM payment
+GROUP BY DATE(time)
+ORDER BY DATE(time)
+```
