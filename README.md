@@ -175,3 +175,36 @@ SELECT
 GROUP BY level
 ORDER BY level
 ```
+
+5. Кол-во сконвертированных игроков в плательщики по квестам.
+
+```sql
+WITH first_payments AS (
+SELECT
+    user_id,
+    MIN(time) AS first_payment
+FROM payment
+GROUP BY user_id
+), quests AS (
+SELECT 
+    qs.user_id,
+    qs.time AS time_start,
+    COALESCE (qc.time, DATETIME('3000-01-01 00:00:00')) AS time_end,
+    qs.quest
+FROM quest_start qs
+LEFT JOIN quest_complete qc ON (qs.user_id = qc.user_id)
+                           AND (qs.quest = qc.quest)
+)
+SELECT 
+    q.quest,
+ --   CAST(SUBSTR(quest, 7, 8) AS INTEGER) AS quest_number,  --Для корректной сортировки по квестам можно извлечь его номер и записать в отдельное поле
+    COUNT(DISTINCT q.user_id) AS first_payed_users
+FROM  quests q
+JOIN first_payments fp ON (q.user_id) = fp.user_id 
+                      AND fp.first_payment BETWEEN time_start AND time_end
+GROUP BY q.quest
+```
+
+6. Суммарное ревенью игроков в зависимости от квестов, которые были активны в момент совершения покупки.  
+   При наличии нескольких активных квестов разделить ревенью в равной степени на каждый квест.  
+   Результат: quest - суммарное кол-во ревенью.
