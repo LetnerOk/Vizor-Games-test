@@ -269,3 +269,8 @@ WHERE time_end < DATETIME('3000-01-01 00:00:00')
 GROUP BY quest
 ORDER BY quest_number
 ```
+
+# Визуализация и выводы
+Визуализацию данных я осуществляла в Preset (open-source Apache Superset).
+
+![](/figures/Retention.png)
