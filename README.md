@@ -154,3 +154,24 @@ FROM payment
 GROUP BY DATE(time)
 ORDER BY DATE(time)
 ```
+
+4. Кол-во сконвертированных игроков в плательщики по уровням.
+   Результат: level - кол-во игроков, кто совершил первый платеж на данном уровне.
+```sql
+WITH first_payments AS
+(
+SELECT
+    user_id,
+    DATE(MIN(time)) AS first_payment
+FROM payment
+GROUP BY user_id
+)
+SELECT 
+    level,
+    COUNT(DISTINCT l.user_id) AS users_with_first_pay
+ FROM level_up l
+ JOIN first_payments fp ON l.user_id = fp.user_id
+                       AND DATE(l.time) = fp.first_payment
+GROUP BY level
+ORDER BY level
+```
