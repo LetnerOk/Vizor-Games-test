@@ -11,7 +11,7 @@ ARPU (average revenue per user) средний доход с пользоват�
 
     ARPU = total revenue (за месяц) / total users (за месяц)(MAU).
       	  	  	
-    LTV = total revenue (за месяц) / total users (за месяц).LTV = ARPU * t. 
+    LTV = ARPU * t. 
 
 ARPU (average revenue per user) средний доход с пользователя рассчитать в свою очередь в виде:  
 
