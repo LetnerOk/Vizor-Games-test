@@ -129,16 +129,16 @@ FROM active_sessions
 GROUP BY active_date
 ```
 
-3. Cредняя длительность сессии в зависимости от порядкового номера сессии с исключением юзера 117411339 из сессии 199 с аномальной продолжительностью.  
+3. Cредняя длительность сессии в зависимости от порядкового номера сессии. Можно сразу исключить выброс в CTE (WHERE user_id != 117411339), чтобы избежать аномальной длительности в сессии 199. 
    Результат: номер сессии - средняя продолжительность.
 ```sql
 WITH num_sesssions AS
 (
 SELECT 
-    *,
+    user_id,
+    duration,
     ROW_NUMBER() OVER(Partition BY user_id ORDER BY open_time) AS number_session
 FROM session_close
-WHERE user_id != 117411339
 )
 SELECT
     number_session,
